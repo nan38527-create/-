@@ -373,6 +373,30 @@
         .update-icon.crowd { background: #36a2eb; } /* Blue */
         .update-icon.wait-time { background: #4bc0c0; } /* Teal */
 
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .charts-container, .bottom-section-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+            .main-header {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -493,206 +517,4 @@
                     </ul>
                 </div>
             </div>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; ABDULLA BIN NASSER 2025. All Rights Reserved.</p>
-    </footer>
-
-    <script>
-        // Chart.js - Visitor Traffic Chart
-        const visitorCtx = document.getElementById('visitorTrafficChart').getContext('2d');
-        new Chart(visitorCtx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Visitors',
-                    data: [1150, 1200, 1350, 1500, 1750, 2100, 1920],
-                    borderColor: 'var(--primary)',
-                    backgroundColor: 'rgba(22, 36, 61, 0.2)',
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: 'var(--primary)',
-                    pointHoverRadius: 7,
-                    pointHoverBackgroundColor: 'var(--accent)'
-                }]
-            },
-            options: {
-                responsive: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: { 
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'var(--secondary)',
-                        titleFont: { size: 14, weight: 'bold' },
-                        bodyFont: { size: 12 },
-                        padding: 10,
-                        callbacks: {
-                            label: function(context) {
-                                return ` Visitors: ${context.parsed.y.toLocaleString()}`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // --- Update Visited Places Count from localStorage ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const visitedPlacesValue = document.getElementById('visited-places-value');
-            // Get the count from localStorage, or default to 0 if it's not set
-            const count = localStorage.getItem('visitedPlacesCount') || '4'; // Default to 4
-            visitedPlacesValue.textContent = count;
-
-            const avgCrowdLevelValue = document.getElementById('avg-crowd-level-value');
-            // Get the average from localStorage, or default to 'N/A'
-            const avgCrowd = localStorage.getItem('averageCrowdLevel');
-            avgCrowdLevelValue.textContent = avgCrowd ? `${avgCrowd}%` : '79%'; // Default to 79%
-
-            const badFeelingsValue = document.getElementById('bad-feelings-value');
-            // Get the count from localStorage, or default to 0
-            const badFeelingsCount = localStorage.getItem('badFeelingsCount') || '2'; // Default to 2
-            badFeelingsValue.textContent = badFeelingsCount;
-        });
-
-        // --- Real-Time Activity Feed Simulation ---
-
-        // 1. Sample data for new activities
-        const newActivities = [
-            {
-                iconClass: 'icon-entry',
-                icon: 'fas fa-sign-in-alt',
-                text: 'Visitor #2306 entered <strong>Dubai Frame</strong>.',
-            },
-            {
-                iconClass: 'icon-transit',
-                icon: 'fas fa-route',
-                text: 'Visitor #2302 is now in transit to <strong>Jumeirah Mosque</strong>.',
-            },
-            {
-                iconClass: 'icon-ok',
-                icon: 'fas fa-check-circle',
-                text: 'Assistance request for Visitor #2304 has been resolved.',
-            }
-        ];
-
-        const activityList = document.querySelector('.activity-list');
-        const maxItems = 7; // Keep the list from getting too long
-
-        // 2. Function to add a new activity to the list
-        function addActivity(activity) {
-            // Create the new list item
-            const newItem = document.createElement('li');
-            newItem.className = 'activity-item new-item';
-            newItem.innerHTML = `
-                <div class="activity-icon ${activity.iconClass}"><i class="${activity.icon}"></i></div>
-                <div class="activity-details">
-                    <p>${activity.text}</p>
-                    <span class="activity-time">Just now</span>
-                </div>
-            `;
-
-            // Add the new item to the top of the list
-            activityList.prepend(newItem);
-
-            // Remove the animation class after it has played
-            setTimeout(() => {
-                newItem.classList.remove('new-item');
-            }, 500);
-
-            // If the list is too long, remove the oldest item
-            if (activityList.children.length > maxItems) {
-                activityList.lastElementChild.remove();
-            }
-        }
-
-        // 3. Set an interval to add a new random activity every few seconds
-        setInterval(() => {
-            const randomIndex = Math.floor(Math.random() * newActivities.length);
-            addActivity(newActivities[randomIndex]);
-        }, 5000); // Adds a new activity every 5 seconds (5000 milliseconds)
-
-        // --- Live Data Updates Simulation ---
-        const liveUpdatesList = document.getElementById('live-updates-list');
-        const maxLiveUpdates = 6;
-
-        const liveUpdateTemplates = [
-            { type: 'crowd', icon: 'fas fa-users', class: 'crowd', location: 'Dubai Mall', unit: '%' },
-            { type: 'temp', icon: 'fas fa-thermometer-half', class: 'temp', location: 'Desert Safari', unit: '°C' },
-            { type: 'wait-time', icon: 'fas fa-clock', class: 'wait-time', location: 'Burj Khalifa', unit: ' min' },
-            { type: 'crowd', icon: 'fas fa-users', class: 'crowd', location: 'The Palm Jumeirah', unit: '%' },
-            { type: 'temp', icon: 'fas fa-thermometer-half', class: 'temp', location: 'Jumeirah Beach', unit: '°C' },
-            { type: 'wait-time', icon: 'fas fa-clock', class: 'wait-time', location: 'Global Village', unit: ' min' },
-            { type: 'alert', icon: 'fas fa-exclamation-triangle', class: 'temp', location: 'Desert Safari', unit: ' High Temp Warning' }
-        ];
-
-        function generateRandomValue(type) {
-            if (type === 'crowd') return Math.floor(Math.random() * (95 - 60) + 60); // 60-95%
-            if (type === 'temp') return Math.floor(Math.random() * (42 - 35) + 35); // 35-42°C
-            if (type === 'wait-time') return Math.floor(Math.random() * (45 - 10) + 10); // 10-45 min
-            return 0;
-        }
-
-        function addLiveUpdate(update) {
-            const value = generateRandomValue(update.type);
-            if (update.type === 'alert') { value = ''; } // No random value for alerts
-            const trendIcon = Math.random() > 0.5 ? 'fa-arrow-up' : 'fa-arrow-down';
-            const trendColor = trendIcon === 'fa-arrow-up' ? 'var(--danger)' : 'var(--success)';
-
-            const newItem = document.createElement('li');
-            newItem.className = 'update-item new-item';
-            newItem.innerHTML = `
-                <div class="update-icon ${update.class}"><i class="${update.icon}"></i></div>
-                <div class="update-details">
-                    <strong>${update.location}:</strong> ${value}${update.unit}
-                </div>
-                ${update.type !== 'alert' ? `
-                    <div class="update-trend" style="margin-left: auto; color: ${trendColor};">
-                        <i class="fas ${trendIcon}"></i>
-                    </div>
-                ` : ''}
-            `;
-
-            liveUpdatesList.prepend(newItem);
-
-            setTimeout(() => {
-                newItem.classList.remove('new-item');
-            }, 500);
-
-        }
-
-        // Initial population
-        liveUpdateTemplates.slice(0, 4).forEach(addLiveUpdate);
-
-        setInterval(() => {
-            const randomIndex = Math.floor(Math.random() * liveUpdateTemplates.length);
-            addLiveUpdate(liveUpdateTemplates[randomIndex]);
-        }, 7000); // Adds a new update every 7 seconds
-
-        // --- Visitor Log Table Search ---
-        const searchInput = document.getElementById('visitor-log-search');
-        const table = document.getElementById('visitor-log-table');
-        const tableRows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-        searchInput.addEventListener('keyup', function() {
-            const filter = searchInput.value.toLowerCase();
-
-            for (let i = 0; i < tableRows.length; i++) {
-                let row = tableRows[i];
-                let rowText = row.textContent || row.innerText;
-
-                if (rowText.toLowerCase().indexOf(filter) > -1) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+    

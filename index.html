@@ -19,6 +19,17 @@
             --transition: all 0.3s ease;
         }
 
+        /* --- START: Page Transition Animation --- */
+        @keyframes page-fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes page-fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        /* --- END: Page Transition Animation --- */
+
         * {
             margin: 0;
             padding: 0;
@@ -33,6 +44,10 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            animation: page-fade-in 0.6s ease-out; /* Apply fade-in on load */
+        }
+        body.fade-out {
+            animation: page-fade-out 0.5s ease-out forwards; /* Apply fade-out on exit */
         }
 
         header {
@@ -87,6 +102,12 @@
             flex-shrink: 0;
             animation: fadeIn 1s ease-in-out;
         }
+
+        .hero-card.active-card {
+            transform: scale(1);
+            opacity: 1;
+        }
+
         .slider.grabbing {
             cursor: grabbing;
             user-select: none;
@@ -163,6 +184,21 @@
             padding: 20px;
             margin-top: auto;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 20px;
+            }
+            header h1 {
+                font-size: 2.5rem;
+            }
+            .hero-card {
+                padding: 30px;
+            }
+            .hero-card h2 { font-size: 1.8rem; }
+            .hero-card p { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -219,6 +255,22 @@
         let animationID = 0;
         let autoPlayInterval;
 
+        // --- START: Page Transition on Link Click ---
+        document.querySelectorAll('.btn').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                // Check if it's a real navigation link
+                if (href && href !== '#') {
+                    e.preventDefault(); // Stop the browser from navigating immediately
+                    document.body.classList.add('fade-out');
+                    setTimeout(() => {
+                        window.location.href = href; // Navigate after the animation
+                    }, 500); // Match animation duration
+                }
+            });
+        });
+        let autoPlayInterval;
+
 
 
         // Create nav dots
@@ -255,8 +307,8 @@
 
             // Update card styles and nav dots
             cards.forEach((card, i) => {
-                card.style.transform = i === currentIndex ? 'scale(1)' : 'scale(0.8)';
-                card.style.opacity = i === currentIndex ? '1' : '0.6';
+                card.classList.toggle('active-card', i === currentIndex);
+                card.style.opacity = i === currentIndex ? '1' : '0.5';
             });
 
             dots.forEach((dot, i) => {
@@ -320,19 +372,19 @@
             startAutoPlay(); // Resume autoplay
         }
 
-        function startAutoPlay() {
-            stopAutoPlay(); // Ensure no multiple intervals are running
-            autoPlayInterval = setInterval(() => {
-                goToSlide(currentIndex + 1);
-            }, 5000); // 5000ms = 5 seconds
-        }
-
         function stopAutoPlay() {
             clearInterval(autoPlayInterval);
         }
 
         function getPositionX(event) {
             return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay(); // Ensure no multiple intervals are running
+            autoPlayInterval = setInterval(() => {
+                goToSlide(currentIndex + 1);
+            }, 5000); // 5000ms = 5 seconds
         }
     </script>
     
